@@ -25,7 +25,7 @@ export const handler: Handler = Sentry.wrapHandler(
     try {
       // 기본 헤더 설정
       const defaultHeaders = {
-        "User-Agent": "Fan-Platform-Lambda/1.0",
+        "User-Agent": "Http-Proxy-Lambda/1.0",
         Accept: "application/json, text/html, */*",
         "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.8",
         "Cache-Control": "no-cache",
