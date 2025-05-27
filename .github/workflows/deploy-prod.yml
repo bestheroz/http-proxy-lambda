@@ -1,0 +1,43 @@
+name: deploy-prod
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.DEPLOYER_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.DEPLOYER_AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ap-northeast-2
+jobs:
+  deploy-prod:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: serverless-deploy-prod
+      cancel-in-progress: false
+    steps:
+      - name: checkout
+        uses: actions/checkout@main
+
+      - uses: pnpm/action-setup@master
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@main
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@main
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - run: pnpm add -g serverless@3 serverless-esbuild
+
+      - name: deploy prod
+        run: |
+          pnpm run deploy:prod

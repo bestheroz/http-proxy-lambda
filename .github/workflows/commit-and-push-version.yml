@@ -1,0 +1,43 @@
+name: push-version
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+permissions:
+  contents: write # 레포지토리 내용 수정 권한 추가
+env:
+  GITHUB_TOKEN: ${{ secrets.WRITABLE_GITHUB_TOKEN }}
+jobs:
+  commit-and-push-version:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: com mit-and-push-version
+      cancel-in-progress: false
+    steps:
+      - name: checkout
+        uses: actions/checkout@main
+        with:
+          ref: main
+
+      - name: get tag
+        id: tag
+        uses: olegtarasov/get-tag@master
+
+      - name: update version of package.json
+        uses: jossef/action-set-json-field@master
+        with:
+          file: package.json
+          field: version
+          value: ${{ steps.tag.outputs.tag }}
+
+      - name: update VITE_PRODUCT_VERSION of .env version
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: VITE_PRODUCT_VERSION=(\d+\.)(\d+\.)(\d+)
+          replace: VITE_PRODUCT_VERSION=${{ steps.tag.outputs.tag }}
+          include: ".env"
+
+      - uses: stefanzweifel/git-auto-commit-action@master
+        with:
+          commit_message: ⬆️Update version (package.json, .env) to ${{ steps.tag.outputs.tag }}
+          branch: main

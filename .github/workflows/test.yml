@@ -1,0 +1,25 @@
+name: test
+on:
+  push:
+    branches: ["**"]
+    tags-ignore: ["**"]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@main
+
+      - uses: pnpm/action-setup@master
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: test
+        run: pnpm run test
+
+      - name: build
+        run: pnpm run build

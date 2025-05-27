@@ -1,0 +1,56 @@
+service: ${self:custom.env.SERVICE_NAME}
+frameworkVersion: "3"
+
+plugins:
+  - serverless-esbuild # ← esbuild 플러그인 활성화
+
+custom:
+  env: ${file(./env/${opt:stage,'local'}.json)}
+
+  # esbuild 번들 옵션
+  esbuild:
+    bundle: true
+    minify: true
+    sourcemap: true
+    target: "node22"
+    platform: "node"
+    format: "esm"
+    outExtension:
+      ".js": ".mjs"
+    external:
+      - "axios"
+      - "@sentry/aws-serverless"
+
+package:
+  individually: false
+  patterns:
+    - "!**/*.test.ts" # 테스트 코드 제외
+    - "!node_modules/**/.cache/**"
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  region: ${self:custom.env.AWS_PROFILE_REGION}
+  stage: ${opt:stage, 'sandbox'}
+  memorySize: ${self:custom.env.MEMORY_SIZE}
+  timeout: 60
+  logRetentionInDays: 30
+#  vpc:
+#    securityGroupIds:
+#      - sg-0182b9687ff8e0556
+#    subnetIds:
+#      - subnet-08fcb5cfc6d615817
+#      - subnet-00694e0e14152ca53
+#      - subnet-0cd0731ede4cbab8b
+  deploymentBucket:
+    name: ${self:custom.env.BUCKET_NAME}
+
+  environment:
+    NODE_OPTIONS: "--enable-source-maps"
+    DEPLOYMENT_ENVIRONMENT: ${self:custom.env.STAGE}
+    AWS_PROFILE_REGION: ${self:custom.env.AWS_PROFILE_REGION}
+
+functions:
+  main:
+    handler: lambda.handler
+    maximumRetryAttempts: 2
