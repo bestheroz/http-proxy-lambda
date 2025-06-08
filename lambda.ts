@@ -1,12 +1,11 @@
 import * as Sentry from "@sentry/aws-serverless";
-import { Context, Handler } from "aws-lambda";
-import axios, { AxiosResponse } from "axios";
-
 Sentry.init({
-  dsn: "https://2c1322cf6ceb332409fc9a096d4db5ec@o4509279333515264.ingest.us.sentry.io/4509377255768065",
+  dsn: "",
   sendDefaultPii: true,
   environment: process.env.DEPLOYMENT_ENVIRONMENT,
 });
+import { Context, Handler } from "aws-lambda";
+import axios, { AxiosResponse } from "axios";
 
 interface RequestResult {
   requestIndex: number;
@@ -34,9 +33,6 @@ export const handler: Handler = Sentry.wrapHandler(
     }
     if (!endpoint) {
       throw new Error("payload에 endpoint 값이 없습니다.");
-    }
-    if (count < 1 || count > 100) {
-      throw new Error("count는 1 이상 100 이하여야 합니다.");
     }
 
     // 기본 헤더 설정
