@@ -3,5 +3,6 @@
   "AWS_PROFILE_REGION": "ap-northeast-2",
   "BUCKET_NAME": "demo-project-deploy",
   "SERVICE_NAME": "http-proxy-lambda",
-  "MEMORY_SIZE": 256
+  "MEMORY_SIZE": 256,
+  "SENTRY_DSN": ""
 }

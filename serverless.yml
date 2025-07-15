@@ -47,6 +47,7 @@ provider:
 
   environment:
     NODE_OPTIONS: "--enable-source-maps"
+    SENTRY_DSN: ${self:custom.env.SENTRY_DSN}
     DEPLOYMENT_ENVIRONMENT: ${self:custom.env.STAGE}
     AWS_PROFILE_REGION: ${self:custom.env.AWS_PROFILE_REGION}
 

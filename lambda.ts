@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/aws-serverless";
 Sentry.init({
-  dsn: "",
+  dsn: process.env.SENTRY_DSN,
   sendDefaultPii: true,
   environment: process.env.DEPLOYMENT_ENVIRONMENT,
 });
