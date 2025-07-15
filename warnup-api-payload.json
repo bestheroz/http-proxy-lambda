@@ -2,5 +2,5 @@
   "endpoint": "https://api-qa.fan-platform.click",
   "method": "get",
   "payload": "{}",
-  "count": 30
+  "count": 1
 }
